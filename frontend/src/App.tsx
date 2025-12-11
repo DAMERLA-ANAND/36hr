@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Toaster } from 'sonner';
 import OnboardingPage from './components/OnboardingPage';
@@ -31,6 +36,14 @@ export interface Job {
   description: string;
   location: string;
   salary: string;
+  applyLink?: string;
+  postedAt?: string;
+  isRemote?: boolean;
+  employerLogo?: string;
+  highlights?: {
+    Qualifications?: string[];
+    Responsibilities?: string[];
+  };
 }
 
 export interface Chat {
@@ -109,9 +122,9 @@ function App() {
     localStorage.setItem('chats', JSON.stringify(newChats));
   };
 
-  const updateChat = (chatId: string, messages: Message[]) => {
+  const updateChat = (chatId: string, messages: Message[], title?: string) => {
     const updatedChats = chats.map((chat) =>
-      chat.id === chatId ? { ...chat, messages } : chat
+      chat.id === chatId ? { ...chat, messages, ...(title && { title }) } : chat
     );
     setChats(updatedChats);
     localStorage.setItem('chats', JSON.stringify(updatedChats));
@@ -128,21 +141,21 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Toaster position="top-center" richColors />
+      <div className='min-h-screen bg-gray-50'>
+        <Toaster position='top-center' richColors />
         <Routes>
           <Route
-            path="/"
+            path='/'
             element={
               !isOnboarded ? (
                 <OnboardingPage onComplete={completeOnboarding} />
               ) : (
-                <Navigate to="/home" replace />
+                <Navigate to='/home' replace />
               )
             }
           />
           <Route
-            path="/home"
+            path='/home'
             element={
               isOnboarded ? (
                 <HomePage
@@ -152,14 +165,14 @@ function App() {
                   userProfile={userProfile}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to='/' replace />
               )
             }
           />
           <Route
-            path="/chat/:chatId?"
+            path='/chat/:chatId?'
             element={
-              isOnboarded ? (
+              isOnboarded && userProfile ? (
                 <ChatPage
                   chats={chats}
                   addChat={addChat}
@@ -168,14 +181,15 @@ function App() {
                   appliedJobs={appliedJobs}
                   saveJob={saveJob}
                   applyToJob={applyToJob}
+                  userEmail={userProfile.email}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to='/' replace />
               )
             }
           />
           <Route
-            path="/profile"
+            path='/profile'
             element={
               isOnboarded && userProfile ? (
                 <ProfilePage
@@ -184,7 +198,7 @@ function App() {
                   signOut={signOut}
                 />
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to='/' replace />
               )
             }
           />

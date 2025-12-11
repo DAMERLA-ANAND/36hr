@@ -44,14 +44,140 @@ class Chat(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
 
 
-
 class ChatHistoryResponseItem(BaseModel):
     """
     Model to represent a single chat history item in the response.
     """
     id: str
     chat_name: str
+    chat_id: str
+
+class GetChatHistoryRequest(BaseModel):
+    """Request model to get chat history for a user."""
+    email: str
 
 class ChatHistoryResponse(BaseModel):
     """Response model for chat history retrieval."""
     chats: List[ChatHistoryResponseItem]
+
+class GetAppliedJobsRequest(BaseModel):
+    """Request model to get applied jobs for a user."""
+    email: str
+
+class GetAppliedJobsResponseItem(BaseModel):
+    """Model to represent a single applied job item in the response."""
+    job_id: str
+    job_title: str
+    company_name: str
+    job_link: str
+
+class GetAppliedJobsResponse(BaseModel):
+    """Response model for applied jobs retrieval."""
+    applied_jobs: List[GetAppliedJobsResponseItem]
+
+class GetSavedJobsRequest(BaseModel):
+    """Request model to get saved jobs for a user."""
+    email: str
+
+class GetSavedJobsResponseItem(BaseModel):
+    """Model to represent a single saved job item in the response."""
+    job_id: str
+    job_title: str
+    company_name: str
+    job_link: str
+
+class GetSavedJobsResponse(BaseModel):
+    """Response model for saved jobs retrieval."""
+    saved_jobs: List[GetSavedJobsResponseItem]
+
+class SaveJobRequest(BaseModel):
+    """Request model to save a job for a user."""
+    email: str
+    job_id: str
+    job_title: str
+    company_name: str
+    job_link: str
+
+class ApplyJobRequest(BaseModel):
+    """Request model to apply to a job for a user."""
+    email: str
+    job_id: str
+    job_title: str
+    company_name: str
+    job_link: str
+
+class UserProfileUpdateRequest(BaseModel):
+    """Request model to update user profile details."""
+    email: str
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    location: Optional[str] = None
+    skills: Optional[List[str]] = None
+    experience: Optional[List[str]] = None
+    profile_summary: Optional[str] = None
+    education: Optional[List[str]] = None
+    certificationsAndAchievementsAndAwards: Optional[List[str]] = None
+    projects: Optional[List[str]] = None
+    about: Optional[str] = None
+
+
+class ChatMessageRequest(BaseModel):
+    """Request model for sending a chat message."""
+    email: str
+    chat_id: str
+    message: str
+    selected_job_id: Optional[str] = None  # Optional job ID when user selects a job
+
+
+class ChatMessageResponse(BaseModel):
+    """Response model for chat message containing bot response and optional jobs."""
+    message: str
+    jobs: Optional[List[dict]] = None  # List of job cards to display
+    selected_job_details: Optional[dict] = None  # Detailed job info when a job is selected
+
+
+class CreateChatRequest(BaseModel):
+    """Request model to create a new chat session."""
+    email: str
+
+
+class CreateChatResponse(BaseModel):
+    """Response model for creating a new chat session."""
+    chat_id: str
+    chat_name: str
+    initial_message: str
+
+
+class ChatContext(BaseModel):
+    """Model to store chat context for memory management."""
+    permanent_context: str  # Minimized resume context created at chat start
+    conversation_summary: str = ""  # Rolling summary of all previous messages
+    recent_messages: List[dict] = []  # Last 5 in/out message pairs
+
+
+class GetChatMessagesRequest(BaseModel):
+    """Request model to get messages for a specific chat."""
+    email: str
+    chat_id: str
+
+
+class GetChatMessagesResponse(BaseModel):
+    """Response model for getting chat messages."""
+    messages: List[ChatMessage]
+    chat_name: str
+
+
+class JobCardData(BaseModel):
+    """Model for job card data sent to frontend."""
+    job_id: str
+    job_title: str
+    employer_name: str
+    job_description: str
+    job_location: Optional[str] = None
+    job_salary: Optional[str] = None
+    job_employment_type: Optional[str] = None
+    job_apply_link: Optional[str] = None
+    job_posted_at: Optional[str] = None
+    job_is_remote: Optional[bool] = None
+    employer_logo: Optional[str] = None
+    job_highlights: Optional[dict] = None
