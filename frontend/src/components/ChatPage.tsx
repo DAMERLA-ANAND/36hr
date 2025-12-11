@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Send, Home, Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import ReactMarkdown from 'react-markdown';
 import { Job, Chat, Message } from '../App';
 import JobCard from './JobCard';
 import {
@@ -18,6 +19,7 @@ interface ChatPageProps {
   savedJobs: Job[];
   appliedJobs: Job[];
   saveJob: (job: Job) => void;
+  unsaveJob: (job: Job) => void;
   applyToJob: (job: Job) => void;
   userEmail: string;
 }
@@ -55,6 +57,7 @@ export default function ChatPage({
   savedJobs,
   appliedJobs,
   saveJob,
+  unsaveJob,
   applyToJob,
   userEmail,
 }: ChatPageProps) {
@@ -70,6 +73,7 @@ export default function ChatPage({
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [actualChatId, setActualChatId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const jobsContainerRef = useRef<HTMLDivElement>(null);
   const jobsPerPage = 3;
 
   // Initialize chat
@@ -83,9 +87,14 @@ export default function ChatPage({
 
       setIsLoading(true);
 
+      // Check if this is a valid server-side chat ID (MongoDB ObjectId format)
+      // Local IDs start with "chat-" and should trigger new chat creation
+      const isLocalId = chatId?.startsWith('chat-');
+      const isNewChat = !chatId || chatId === 'new' || isLocalId;
+
       try {
-        if (chatId && chatId !== 'new') {
-          // Load existing chat
+        if (!isNewChat) {
+          // Load existing chat from server
           const existingChat = chats.find((chat) => chat.id === chatId);
           if (existingChat) {
             setCurrentChat(existingChat);
@@ -133,8 +142,26 @@ export default function ChatPage({
               setActualChatId(chatId);
               addChat(newChat);
             } catch (err) {
-              toast.error('Chat not found');
-              navigate('/home');
+              // Chat not found on server, create a new one
+              console.log('Chat not found, creating new chat');
+              const result = await createChat(userEmail);
+              const newChat: Chat = {
+                id: result.chat_id,
+                title: result.chat_name,
+                messages: [
+                  {
+                    id: `msg-${Date.now()}`,
+                    sender: 'bot',
+                    content: result.initial_message,
+                    timestamp: new Date(),
+                  },
+                ],
+                timestamp: new Date(),
+              };
+              setCurrentChat(newChat);
+              setActualChatId(result.chat_id);
+              addChat(newChat);
+              navigate(`/chat/${result.chat_id}`, { replace: true });
             }
           }
         } else {
@@ -174,6 +201,13 @@ export default function ChatPage({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentChat?.messages]);
+
+  // Auto-scroll to jobs when they are loaded
+  useEffect(() => {
+    if (showJobs && displayedJobs.length > 0 && jobsContainerRef.current) {
+      jobsContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showJobs, displayedJobs]);
 
   const handleSendMessage = async (text?: string) => {
     const messageText = text || message;
@@ -329,7 +363,13 @@ export default function ChatPage({
                       </span>
                     </div>
                   )}
-                  <p className='text-sm whitespace-pre-wrap'>{msg.content}</p>
+                  {msg.sender === 'bot' ? (
+                    <div className='text-sm prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0 prose-headings:my-2'>
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className='text-sm whitespace-pre-wrap'>{msg.content}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -430,7 +470,9 @@ export default function ChatPage({
           {showJobs && displayedJobs.length > 0 ? (
             <>
               {/* Jobs List */}
-              <div className='flex-1 overflow-y-auto p-6'>
+              <div
+                ref={jobsContainerRef}
+                className='flex-1 overflow-y-auto p-6'>
                 <div className='mb-4'>
                   <h3 className='text-gray-900 font-medium text-lg'>
                     Matching Jobs
@@ -445,6 +487,7 @@ export default function ChatPage({
                       key={job.id}
                       job={job}
                       onSave={saveJob}
+                      onUnsave={unsaveJob}
                       onApply={applyToJob}
                       onChoose={handleChooseJob}
                       isSaved={savedJobs.some((j) => j.id === job.id)}

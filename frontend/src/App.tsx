@@ -110,6 +110,12 @@ function App() {
     localStorage.setItem('savedJobs', JSON.stringify(newSavedJobs));
   };
 
+  const unsaveJob = (job: Job) => {
+    const newSavedJobs = savedJobs.filter((j) => j.id !== job.id);
+    setSavedJobs(newSavedJobs);
+    localStorage.setItem('savedJobs', JSON.stringify(newSavedJobs));
+  };
+
   const applyToJob = (job: Job) => {
     const newAppliedJobs = [...appliedJobs, job];
     setAppliedJobs(newAppliedJobs);
@@ -128,6 +134,12 @@ function App() {
     );
     setChats(updatedChats);
     localStorage.setItem('chats', JSON.stringify(updatedChats));
+  };
+
+  const deleteChat = (chatId: string) => {
+    const filteredChats = chats.filter((chat) => chat.id !== chatId);
+    setChats(filteredChats);
+    localStorage.setItem('chats', JSON.stringify(filteredChats));
   };
 
   const signOut = () => {
@@ -163,6 +175,9 @@ function App() {
                   appliedJobs={appliedJobs}
                   chats={chats}
                   userProfile={userProfile}
+                  unsaveJob={unsaveJob}
+                  applyToJob={applyToJob}
+                  deleteChat={deleteChat}
                 />
               ) : (
                 <Navigate to='/' replace />
@@ -180,6 +195,7 @@ function App() {
                   savedJobs={savedJobs}
                   appliedJobs={appliedJobs}
                   saveJob={saveJob}
+                  unsaveJob={unsaveJob}
                   applyToJob={applyToJob}
                   userEmail={userProfile.email}
                 />

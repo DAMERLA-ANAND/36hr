@@ -30,19 +30,27 @@ SYSTEM_PROMPT = """You are JobBot AI, a friendly and professional career assista
 4. Help users answer application questions for specific jobs
 5. Give career and job-related advice across any domain
 
+RESPONSE STYLE - VERY IMPORTANT:
+- Keep responses SHORT and CONCISE - aim for 2-4 sentences maximum for most responses
+- Use bullet points for lists instead of long paragraphs
+- Be direct and actionable - get to the point quickly
+- Avoid repetitive or verbose explanations
+- Only provide detailed responses when specifically asked for in-depth information
+- When showing job results, briefly summarize what you found - the job cards will show the details
+
 Guidelines:
 - Be conversational, helpful, and encouraging
 - Use the user's profile context to provide personalized recommendations
-- When searching for jobs, consider the user's skills, experience, and location
-- When a job is selected, provide detailed insights about the role and company
-- Offer actionable advice that helps users stand out
-- Be supportive but honest about areas for improvement
+- When searching for jobs, keep the query SIMPLE - don't over-filter
+- When a job is selected, provide brief insights about the role
+- Offer actionable advice in concise bullet points
+- Be supportive but honest
 
 You have access to the following tools:
 - search_jobs: Search for job listings based on various criteria
 - get_job_details: Get detailed information about a specific job
 
-When users ask about jobs or careers, use these tools proactively to provide helpful information.
+When users ask about jobs, search with BROAD queries to find more results. Avoid using too many filters.
 """
 
 # Define function declarations for Gemini using proper protobuf types
@@ -50,37 +58,37 @@ def get_search_jobs_function():
     """Create the search_jobs function declaration using protos."""
     return protos.FunctionDeclaration(
         name="search_jobs",
-        description="Search for job listings based on a natural language query and various filters. Use this when users want to find jobs, explore opportunities, or ask about available positions.",
+        description="Search for job listings. IMPORTANT: Keep queries SIMPLE to find more results. Use minimal filters - only add filters when the user EXPLICITLY asks for them. Start with just the job title/role, add location only if user specifies one.",
         parameters=protos.Schema(
             type=protos.Type.OBJECT,
             properties={
                 "query": protos.Schema(
                     type=protos.Type.STRING,
-                    description="Natural language job search query. Include job title, skills, and location when possible. Examples: 'python developer in new york', 'remote frontend react jobs', 'senior data scientist california'"
+                    description="Keep it SIMPLE: just the job title or role. Examples: 'software developer', 'frontend developer', 'data scientist'. Only add location if user explicitly mentioned one."
                 ),
                 "country": protos.Schema(
                     type=protos.Type.STRING,
-                    description="ISO-3166-1 alpha-2 country code (e.g., 'us', 'uk', 'de'). Default is 'us'."
+                    description="ISO-3166-1 alpha-2 country code (e.g., 'us', 'uk'). Only use if user specifies a country. Default is 'us'."
                 ),
                 "date_posted": protos.Schema(
                     type=protos.Type.STRING,
-                    description="Filter by when the job was posted. Options: 'all', 'today', '3days', 'week', 'month'. Default is 'all'."
+                    description="ONLY use if user asks for recent jobs. Options: 'all', 'today', '3days', 'week', 'month'. Default is 'all'."
                 ),
                 "employment_types": protos.Schema(
                     type=protos.Type.STRING,
-                    description="Comma-separated employment types: FULLTIME, CONTRACTOR, PARTTIME, INTERN"
+                    description="ONLY use if user explicitly asks for specific employment type. Options: FULLTIME, CONTRACTOR, PARTTIME, INTERN"
                 ),
                 "job_requirements": protos.Schema(
                     type=protos.Type.STRING,
-                    description="Comma-separated requirements: under_3_years_experience, more_than_3_years_experience, no_experience, no_degree"
+                    description="ONLY use if user explicitly asks for experience level. Options: under_3_years_experience, more_than_3_years_experience, no_experience, no_degree"
                 ),
                 "work_from_home": protos.Schema(
                     type=protos.Type.BOOLEAN,
-                    description="Set to true to only return remote/work-from-home positions"
+                    description="ONLY set to true if user explicitly asks for remote/work-from-home jobs"
                 ),
                 "num_pages": protos.Schema(
                     type=protos.Type.INTEGER,
-                    description="Number of pages of results to return (1-5). Each page has 10 jobs. Default is 1."
+                    description="Number of pages (1-5). Default is 2 to get more results."
                 )
             },
             required=["query"]
