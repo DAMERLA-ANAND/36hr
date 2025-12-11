@@ -120,6 +120,54 @@ async def confirm_onboarding_details(onboard_confirmed_details: UserOnboardingRe
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/chatHistoryRequest")
+async def chat_history_request():
+    """ Endpoint to handle chat history requests.
+        For home page chat history retrieval.
+        1. Fetch chat history from the database for the user.
+        2. Return the chat history to the frontend.
+        3. return only the id, and chat name for listing on home page.
+    """
+    pass
+
+@app.post("/api/getAppliedJobs")
+async def get_applied_jobs():
+    """ Endpoint to get applied jobs for the user.
+        1. Fetch applied jobs from the database for the user.
+        2. Return the applied jobs to the frontend.
+    """
+    pass
+
+
+
+@app.post("/api/getSavedJobs")
+async def get_saved_jobs():
+    """ Endpoint to get saved jobs for the user.
+        1. Fetch saved jobs from the database for the user.
+        2. Return the saved jobs to the frontend.
+    """
+    pass
+
+
+
+"""
+next creates a new chat session endpoint
+then chat message endpoint to send and receive messages in a chat session
+then save chat session endpoint
+then delete chat session endpoint
+the chat bot is powered by Gemini 2.5 model llm+function calling for job search and application
+the jsearch api will be called via function calling from the gemini model
+the retreived job listings will be formatted and sent back to the user in the chat interface
+the user can choose a job via frontend and ask resume quality questions about the job
+the questions can be about resume fitment, skills match, etc.
+how to improve the resume for better chances of getting selected
+the user can then save the job via job saving endpoint
+the user can apply to the job via job application endpoint
+if user clicked apply, in the job interface, a new tab will open with job link and job applied request popup will appear asking for confirmation
+once confirmed the job application endpoint will be called to apply to the job via jsearch api
+
+"""
+
 
 if __name__ == "__main__":
     # command to run the app: uvicorn main:app --reload

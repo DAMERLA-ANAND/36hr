@@ -28,3 +28,30 @@ class UserOnboardingResponse(BaseModel):
     projects: Optional[List[str]] = None
     about: Optional[str] = None
 
+
+class ChatMessage(BaseModel):
+    """Model to represent a chat message in the chat history and chat interface."""
+    sender: str  # 'user' or 'bot'
+    message: str
+    timestamp: Optional[str] = None  # ISO formatted timestamp
+class Chat(BaseModel):
+    """
+    Model to represent a chat session, containing multiple chat messages.
+    """
+    messages: List[ChatMessage]
+    chat_name: str
+    # chat id will be handled by the database (ObjectId)
+    id: Optional[str] = Field(None, alias="_id")
+
+
+
+class ChatHistoryResponseItem(BaseModel):
+    """
+    Model to represent a single chat history item in the response.
+    """
+    id: str
+    chat_name: str
+
+class ChatHistoryResponse(BaseModel):
+    """Response model for chat history retrieval."""
+    chats: List[ChatHistoryResponseItem]
