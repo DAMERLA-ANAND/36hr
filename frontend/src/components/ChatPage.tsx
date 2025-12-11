@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Send, Home, Sparkles } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Job, Chat, Message } from '../App';
 import JobCard from './JobCard';
 
@@ -153,8 +153,6 @@ export default function ChatPage({
     };
 
     const updatedMessages = [...currentChat.messages, newUserMessage];
-
-    // Update chat title based on first user message
     if (currentChat.messages.length === 1) {
       const updatedChat = {
         ...currentChat,
@@ -280,7 +278,7 @@ export default function ChatPage({
             </div>
           )}
 
-          {/* Input */}
+          {}
           <div className="p-4 border-t border-gray-200">
             <div className="flex gap-2">
               <input
@@ -293,6 +291,7 @@ export default function ChatPage({
               />
               <button
                 onClick={() => handleSendMessage()}
+                title="Send message"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Send className="w-5 h-5" />
@@ -301,7 +300,7 @@ export default function ChatPage({
           </div>
         </div>
 
-        {/* Right Side - Jobs (60%) */}
+        {}
         <div className="w-[60%] bg-gray-50 flex flex-col">
           {showJobs ? (
             <>

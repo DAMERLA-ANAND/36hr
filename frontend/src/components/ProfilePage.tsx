@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, LogOut, Camera, Mail, Phone, MapPin, Briefcase, GraduationCap, Award, FolderKanban, FileText } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { UserProfile } from '../App';
 
 interface ProfilePageProps {
@@ -172,7 +172,10 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                 )}
               </div>
               {isEditing && (
-                <button className="absolute bottom-2 right-2 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors">
+                <button 
+                  aria-label="Change profile photo"
+                  className="absolute bottom-2 right-2 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+                >
                   <Camera className="w-5 h-5" />
                 </button>
               )}
@@ -209,12 +212,13 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
             <div className="space-y-6">
               {/* Name */}
               <div>
-                <label className="flex items-center gap-2 text-gray-700 mb-2">
+                <label htmlFor="name" className="flex items-center gap-2 text-gray-700 mb-2">
                   <User className="w-4 h-4" />
                   Full Name
                 </label>
                 {isEditing ? (
                   <input
+                    id="name"
                     type="text"
                     name="name"
                     value={formData.name}
@@ -228,12 +232,13 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
 
               {/* Email */}
               <div>
-                <label className="flex items-center gap-2 text-gray-700 mb-2">
+                <label htmlFor="email" className="flex items-center gap-2 text-gray-700 mb-2">
                   <Mail className="w-4 h-4" />
                   Email
                 </label>
                 {isEditing ? (
                   <input
+                    id="email"
                     type="email"
                     name="email"
                     value={formData.email}
@@ -247,12 +252,13 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
 
               {/* Phone */}
               <div>
-                <label className="flex items-center gap-2 text-gray-700 mb-2">
+                <label htmlFor="phone" className="flex items-center gap-2 text-gray-700 mb-2">
                   <Phone className="w-4 h-4" />
                   Phone
                 </label>
                 {isEditing ? (
                   <input
+                    id="phone"
                     type="tel"
                     name="phone"
                     value={formData.phone}
@@ -266,12 +272,13 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
 
               {/* Location */}
               <div>
-                <label className="flex items-center gap-2 text-gray-700 mb-2">
+                <label htmlFor="location" className="flex items-center gap-2 text-gray-700 mb-2">
                   <MapPin className="w-4 h-4" />
                   Location
                 </label>
                 {isEditing ? (
                   <input
+                    id="location"
                     type="text"
                     name="location"
                     value={formData.location}
@@ -285,12 +292,13 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
 
               {/* Profile Summary */}
               <div>
-                <label className="flex items-center gap-2 text-gray-700 mb-2">
+                <label htmlFor="profile_summary" className="flex items-center gap-2 text-gray-700 mb-2">
                   <FileText className="w-4 h-4" />
                   Profile Summary
                 </label>
                 {isEditing ? (
                   <textarea
+                    id="profile_summary"
                     name="profile_summary"
                     value={formData.profile_summary}
                     onChange={handleInputChange}
@@ -519,12 +527,13 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
               {/* About */}
               {(formData.about && formData.about.trim()) || isEditing ? (
                 <div>
-                  <label className="flex items-center gap-2 text-gray-700 mb-2">
+                  <label htmlFor="about" className="flex items-center gap-2 text-gray-700 mb-2">
                     <User className="w-4 h-4" />
                     About
                   </label>
                   {isEditing ? (
                     <textarea
+                      id="about"
                       name="about"
                       value={formData.about}
                       onChange={handleInputChange}
