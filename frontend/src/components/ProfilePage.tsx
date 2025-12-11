@@ -223,6 +223,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
+                    aria-label="Full Name"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
                 ) : (
@@ -243,6 +244,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    aria-label="Email"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
                 ) : (
@@ -263,6 +265,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
+                    aria-label="Phone"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
                 ) : (
@@ -283,6 +286,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
+                    aria-label="Location"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
                 ) : (
@@ -303,6 +307,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                     value={formData.profile_summary}
                     onChange={handleInputChange}
                     rows={4}
+                    aria-label="Profile Summary"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
                   />
                 ) : (
@@ -324,6 +329,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                       onChange={(e) => setSkillInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
                       placeholder="Add a skill"
+                      aria-label="Add a skill"
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                     />
                     <button
@@ -368,6 +374,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                       onChange={(e) => setExperienceInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addExperience())}
                       placeholder="Add experience"
+                      aria-label="Add experience"
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                     />
                     <button
@@ -410,6 +417,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                         onChange={(e) => setEducationInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addEducation())}
                         placeholder="Add education"
+                        aria-label="Add education"
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       />
                       <button
@@ -453,6 +461,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                         onChange={(e) => setCertificationInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCertification())}
                         placeholder="Add certification"
+                        aria-label="Add certification"
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       />
                       <button
@@ -496,6 +505,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                         onChange={(e) => setProjectInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addProject())}
                         placeholder="Add project"
+                        aria-label="Add project"
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       />
                       <button
@@ -538,6 +548,7 @@ export default function ProfilePage({ userProfile, updateProfile, signOut }: Pro
                       value={formData.about}
                       onChange={handleInputChange}
                       rows={3}
+                      aria-label="About"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
                     />
                   ) : (
