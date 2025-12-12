@@ -10,3 +10,4 @@ typing
 PyPDF2
 python-multipart
 aiohttp
+httpx

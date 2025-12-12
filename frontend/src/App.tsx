@@ -10,6 +10,8 @@ import OnboardingPage from './components/OnboardingPage';
 import HomePage from './components/HomePage';
 import ChatPage from './components/ChatPage';
 import ProfilePage from './components/ProfilePage';
+import InterviewPrepPage from './components/InterviewPrepPage';
+import InterviewRoomPage from './components/InterviewRoomPage';
 
 export interface UserProfile {
   name: string;
@@ -218,6 +220,35 @@ function App() {
               )
             }
           />
+          {/* Interview Prep Routes */}
+          <Route
+            path='/interview-prep'
+            element={
+              isOnboarded && userProfile ? (
+                <InterviewPrepPage
+                  savedJobs={savedJobs}
+                  appliedJobs={appliedJobs}
+                  userProfile={userProfile}
+                />
+              ) : (
+                <Navigate to='/' replace />
+              )
+            }
+          />
+          <Route
+            path='/interview/:interviewId'
+            element={
+              isOnboarded && userProfile ? (
+                <InterviewRoomPage userProfile={userProfile} />
+              ) : (
+                <Navigate to='/' replace />
+              )
+            }
+          />
+          {/* Redirect /dashboard to /home for compatibility */}
+          <Route path='/dashboard' element={<Navigate to='/home' replace />} />
+          {/* Catch all - redirect unknown routes to home */}
+          <Route path='*' element={<Navigate to='/home' replace />} />
         </Routes>
       </div>
     </Router>

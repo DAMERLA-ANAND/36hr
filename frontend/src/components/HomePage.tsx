@@ -7,6 +7,7 @@ import {
   BookmarkCheck,
   MessageSquare,
   Trash2,
+  Mic,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Job, Chat, UserProfile } from '../App';
@@ -116,9 +117,17 @@ export default function HomePage({
         {/* New Chat Button */}
         <button
           onClick={handleNewChat}
-          className='w-full mb-8 p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3'>
+          className='w-full mb-4 p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3'>
           <MessageSquarePlus className='w-6 h-6' />
           <span>Start New Job Search Chat</span>
+        </button>
+
+        {/* Interview Prep Button */}
+        <button
+          onClick={() => navigate('/interview-prep')}
+          className='w-full mb-8 p-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3'>
+          <Mic className='w-6 h-6' />
+          <span>Practice Mock Interviews</span>
         </button>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>

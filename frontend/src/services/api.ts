@@ -184,3 +184,241 @@ export const deleteChatSession = async (
 
   return response.json();
 };
+
+// ==================== INTERVIEW API TYPES ====================
+
+export interface InterviewQuestion {
+  id: string;
+  question: string;
+  follow_up_count: number;
+}
+
+export interface Interviewer {
+  id: number;
+  agent_id?: string;
+  name: string;
+  description: string;
+  image: string;
+  audio?: string;
+  empathy: number;
+  exploration: number;
+  rapport: number;
+  speed: number;
+}
+
+export interface Interview {
+  id: string;
+  name: string;
+  description: string;
+  objective: string;
+  interviewer_id: number;
+  questions: InterviewQuestion[];
+  question_count: number;
+  time_duration: string;
+  is_active: boolean;
+  response_count: number;
+  job_id?: string;
+  job_title?: string;
+  company_name?: string;
+  created_at: string;
+  url: string;
+}
+
+export interface InterviewResponse {
+  id: string;
+  interview_id: string;
+  name: string;
+  email: string;
+  call_id: string;
+  candidate_status: string;
+  duration: number;
+  is_analysed: boolean;
+  is_ended: boolean;
+  created_at: string;
+  analytics?: InterviewAnalytics;
+  interview_name?: string;
+  job_title?: string;
+  company_name?: string;
+}
+
+export interface InterviewAnalytics {
+  overall_score: number;
+  communication_score: number;
+  technical_score: number;
+  strengths: string[];
+  improvements: string[];
+  notable_quotes: string[];
+}
+
+export interface RegisterCallResponse {
+  call_id: string;
+  access_token: string;
+}
+
+// ==================== INTERVIEW API FUNCTIONS ====================
+
+export const getInterviewers = async (): Promise<{ interviewers: Interviewer[] }> => {
+  const response = await fetch('/api/interviewers');
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to get interviewers');
+  }
+  return response.json();
+};
+
+export const createInterview = async (data: {
+  email: string;
+  name: string;
+  objective: string;
+  interviewer_id?: number;
+  question_count?: number;
+  time_duration?: string;
+  job_id?: string;
+  job_title?: string;
+  company_name?: string;
+  job_description?: string;
+}): Promise<Interview> => {
+  const response = await fetch('/api/createInterview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to create interview');
+  }
+  return response.json();
+};
+
+export const createJobInterview = async (data: {
+  email: string;
+  job_id: string;
+  job_title: string;
+  company_name: string;
+  job_description: string;
+  interviewer_id?: number;
+  question_count?: number;
+  time_duration?: string;
+}): Promise<Interview> => {
+  const response = await fetch('/api/createJobInterview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to create job interview');
+  }
+  return response.json();
+};
+
+export const getUserInterviews = async (
+  email: string
+): Promise<{ interviews: Interview[] }> => {
+  const response = await fetch(`/api/interviews?email=${encodeURIComponent(email)}`);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to get interviews');
+  }
+  return response.json();
+};
+
+export const getInterview = async (interviewId: string): Promise<Interview> => {
+  const response = await fetch(`/api/interview/${interviewId}`);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to get interview');
+  }
+  return response.json();
+};
+
+export const deleteInterview = async (interviewId: string): Promise<{ message: string }> => {
+  const response = await fetch(`/api/interview/${interviewId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to delete interview');
+  }
+  return response.json();
+};
+
+export const registerCall = async (data: {
+  interview_id: string;
+  interviewer_id: number;
+  user_name: string;
+  user_email: string;
+}): Promise<RegisterCallResponse> => {
+  const response = await fetch('/api/registerCall', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to register call');
+  }
+  return response.json();
+};
+
+export const updateInterviewResponse = async (data: {
+  call_id: string;
+  is_ended?: boolean;
+  duration?: number;
+  tab_switch_count?: number;
+}): Promise<{ message: string }> => {
+  const response = await fetch('/api/updateInterviewResponse', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to update response');
+  }
+  return response.json();
+};
+
+export const getInterviewHistory = async (
+  email: string
+): Promise<{ responses: InterviewResponse[] }> => {
+  const response = await fetch(`/api/interviewHistory?email=${encodeURIComponent(email)}`);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to get interview history');
+  }
+  return response.json();
+};
+
+export const analyzeInterview = async (
+  callId: string
+): Promise<InterviewAnalytics> => {
+  const response = await fetch('/api/analyzeInterview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ call_id: callId }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to analyze interview');
+  }
+  return response.json();
+};
+
+export const submitInterviewFeedback = async (data: {
+  interview_id: string;
+  email: string;
+  feedback: string;
+  satisfaction: number;
+}): Promise<{ message: string; feedback_id: string }> => {
+  const response = await fetch('/api/submitInterviewFeedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to submit feedback');
+  }
+  return response.json();
+};

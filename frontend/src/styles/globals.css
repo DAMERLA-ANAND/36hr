@@ -232,3 +232,13 @@ html {
 .prose p:last-child {
   margin-bottom: 0;
 }
+
+/* Force text colors in dark-themed interview pages */
+.dark-theme {
+  --foreground: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.dark-theme *:not(.bg-white):not([class*="bg-gray-5"]):not([class*="bg-gray-1"]):not([class*="bg-blue-5"]):not([class*="bg-green-5"]) {
+  color: inherit !important;
+}

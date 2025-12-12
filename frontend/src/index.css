@@ -1500,3 +1500,52 @@ html {
   syntax: "*";
   inherits: false
 }
+
+/* Force white text in dark theme interview pages */
+.dark-theme {
+  color: #ffffff !important;
+}
+
+.dark-theme * {
+  color: #ffffff;
+}
+
+.dark-theme .text-force-white,
+.text-force-white {
+  color: #ffffff !important;
+}
+
+.dark-theme .text-force-gray-100,
+.text-force-gray-100 {
+  color: #f3f4f6 !important;
+}
+
+.dark-theme .text-force-gray-200,
+.text-force-gray-200 {
+  color: #e5e7eb !important;
+}
+
+.dark-theme .text-force-gray-300,
+.text-force-gray-300 {
+  color: #d1d5db !important;
+}
+
+.dark-theme .text-force-gray-400,
+.text-force-gray-400 {
+  color: #9ca3af !important;
+}
+
+.dark-theme .text-force-blue-400,
+.text-force-blue-400 {
+  color: #60a5fa !important;
+}
+
+.dark-theme .text-force-green-400,
+.text-force-green-400 {
+  color: #4ade80 !important;
+}
+
+.dark-theme .text-force-red-400,
+.text-force-red-400 {
+  color: #f87171 !important;
+}

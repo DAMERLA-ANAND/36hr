@@ -181,3 +181,156 @@ class JobCardData(BaseModel):
     job_is_remote: Optional[bool] = None
     employer_logo: Optional[str] = None
     job_highlights: Optional[dict] = None
+
+
+# ==================== INTERVIEW MODELS ====================
+
+class InterviewQuestion(BaseModel):
+    """Model for interview question."""
+    id: str
+    question: str
+    follow_up_count: int = 2
+
+
+class InterviewerInfo(BaseModel):
+    """Model for AI interviewer information."""
+    id: int
+    agent_id: Optional[str] = None
+    name: str
+    description: str
+    image: str
+    audio: Optional[str] = None
+    empathy: int
+    exploration: int
+    rapport: int
+    speed: int
+
+
+class CreateInterviewRequest(BaseModel):
+    """Request model to create a new interview."""
+    email: str
+    name: str
+    objective: str
+    interviewer_id: int = 1
+    question_count: int = 5
+    time_duration: str = "10"
+    # Optional job-specific fields
+    job_id: Optional[str] = None
+    job_title: Optional[str] = None
+    company_name: Optional[str] = None
+    job_description: Optional[str] = None
+
+
+class CreateJobInterviewRequest(BaseModel):
+    """Request model to create an interview for a specific job."""
+    email: str
+    job_id: str
+    job_title: str
+    company_name: str
+    job_description: str
+    interviewer_id: int = 1
+    question_count: int = 5
+    time_duration: str = "10"
+
+
+class InterviewResponse(BaseModel):
+    """Response model for interview data."""
+    id: str
+    name: str
+    description: str
+    objective: str
+    interviewer_id: int
+    questions: List[InterviewQuestion]
+    question_count: int
+    time_duration: str
+    is_active: bool
+    response_count: int
+    job_id: Optional[str] = None
+    job_title: Optional[str] = None
+    company_name: Optional[str] = None
+    created_at: str
+    url: str
+
+
+class GetInterviewsResponse(BaseModel):
+    """Response model for getting user's interviews."""
+    interviews: List[InterviewResponse]
+
+
+class RegisterCallRequest(BaseModel):
+    """Request model to register a Retell call."""
+    interview_id: str
+    interviewer_id: int
+    user_name: str
+    user_email: str
+    # Dynamic variables for Retell LLM
+    interview_name: Optional[str] = None
+    interview_questions: Optional[str] = None
+
+
+class RegisterCallResponse(BaseModel):
+    """Response model for Retell call registration."""
+    call_id: str
+    access_token: str
+
+
+class CreateInterviewResponseRequest(BaseModel):
+    """Request model to create an interview response record."""
+    interview_id: str
+    name: str
+    email: str
+    call_id: str
+
+
+class InterviewResponseData(BaseModel):
+    """Model for interview response/recording data."""
+    id: str
+    interview_id: str
+    name: str
+    email: str
+    call_id: str
+    candidate_status: str
+    duration: int
+    is_analysed: bool
+    is_ended: bool
+    created_at: str
+    analytics: Optional[dict] = None
+    interview_name: Optional[str] = None
+    job_title: Optional[str] = None
+    company_name: Optional[str] = None
+
+
+class GetInterviewHistoryResponse(BaseModel):
+    """Response model for user's interview history."""
+    responses: List[InterviewResponseData]
+
+
+class SubmitFeedbackRequest(BaseModel):
+    """Request model to submit interview feedback."""
+    interview_id: str
+    email: str
+    feedback: str
+    satisfaction: int  # 1-5 rating
+
+
+class AnalyzeInterviewRequest(BaseModel):
+    """Request model to analyze an interview."""
+    call_id: str
+
+
+class InterviewAnalytics(BaseModel):
+    """Model for interview analytics."""
+    overall_score: int
+    communication_score: int
+    technical_score: int
+    strengths: List[str]
+    improvements: List[str]
+    notable_quotes: List[str]
+
+
+class UpdateInterviewResponseRequest(BaseModel):
+    """Request model to update interview response."""
+    call_id: str
+    is_ended: Optional[bool] = None
+    duration: Optional[int] = None
+    tab_switch_count: Optional[int] = None
