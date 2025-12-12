@@ -18,10 +18,12 @@ import { UserProfile } from '../App';
 import {
   Interview,
   Interviewer,
+  InterviewAnalytics,
   getInterview,
   getInterviewers,
   registerCall,
   updateInterviewResponse,
+  analyzeInterview,
 } from '../services/api';
 
 // Note: You'll need to install retell-client-js-sdk
@@ -55,6 +57,11 @@ export default function InterviewRoomPage({ userProfile }: InterviewRoomPageProp
   // Tab switch detection
   const [tabSwitchCount, setTabSwitchCount] = useState(0);
   const [showTabWarning, setShowTabWarning] = useState(false);
+  
+  // Analysis state
+  const [analysis, setAnalysis] = useState<InterviewAnalytics | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
   
   // Retell Web Client reference
   const webClientRef = useRef<any>(null);
@@ -397,7 +404,7 @@ export default function InterviewRoomPage({ userProfile }: InterviewRoomPageProp
             </div>
             <h2 className="text-2xl font-bold mb-2" style={{ color: '#ffffff' }}>Interview Completed!</h2>
             <p className="mb-8 text-lg" style={{ color: '#d1d5db' }}>
-              Great job! Your interview responses are being analyzed.
+              Great job! {analysis ? 'Here are your results.' : 'Click "View Analysis" to see your performance insights.'}
             </p>
 
             {/* Summary */}
@@ -421,7 +428,95 @@ export default function InterviewRoomPage({ userProfile }: InterviewRoomPageProp
               </div>
             </div>
 
+            {/* Analysis Results */}
+            {analysis && (
+              <div className="rounded-xl p-6 mb-8 text-left" style={{ backgroundColor: '#1f2937', border: '1px solid #374151' }}>
+                <h3 className="font-bold text-lg mb-4" style={{ color: '#ffffff' }}>📊 Performance Analysis</h3>
+                
+                {/* Scores */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#374151' }}>
+                    <p className="text-3xl font-bold" style={{ color: '#4ade80' }}>{analysis.overall_score}/10</p>
+                    <p className="text-sm" style={{ color: '#d1d5db' }}>Overall Score</p>
+                  </div>
+                  <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#374151' }}>
+                    <p className="text-3xl font-bold" style={{ color: '#60a5fa' }}>{analysis.communication_score}/10</p>
+                    <p className="text-sm" style={{ color: '#d1d5db' }}>Communication</p>
+                  </div>
+                  <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#374151' }}>
+                    <p className="text-3xl font-bold" style={{ color: '#a78bfa' }}>{analysis.technical_score}/10</p>
+                    <p className="text-sm" style={{ color: '#d1d5db' }}>Technical</p>
+                  </div>
+                </div>
+
+                {/* Strengths */}
+                <div className="mb-4">
+                  <h4 className="font-semibold mb-2" style={{ color: '#4ade80' }}>✓ Strengths</h4>
+                  <ul className="space-y-1">
+                    {analysis.strengths.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm" style={{ color: '#e5e7eb' }}>
+                        <span style={{ color: '#4ade80' }}>•</span> {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Improvements */}
+                <div className="mb-4">
+                  <h4 className="font-semibold mb-2" style={{ color: '#fbbf24' }}>→ Areas for Improvement</h4>
+                  <ul className="space-y-1">
+                    {analysis.improvements.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm" style={{ color: '#e5e7eb' }}>
+                        <span style={{ color: '#fbbf24' }}>•</span> {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Notable Quotes */}
+                {analysis.notable_quotes && analysis.notable_quotes.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-2" style={{ color: '#60a5fa' }}>💬 Notable Responses</h4>
+                    <div className="space-y-2">
+                      {analysis.notable_quotes.map((q, i) => (
+                        <p key={i} className="text-sm italic p-2 rounded" style={{ backgroundColor: '#374151', color: '#d1d5db' }}>
+                          "{q}"
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-4 justify-center flex-wrap">
+              {!analysis && callId && (
+                <button
+                  onClick={async () => {
+                    if (!callId) return;
+                    setIsAnalyzing(true);
+                    try {
+                      const result = await analyzeInterview(callId);
+                      setAnalysis(result);
+                      toast.success('Analysis complete!');
+                    } catch (error) {
+                      console.error('Error analyzing interview:', error);
+                      toast.error('Analysis not available yet. Please try again in a few moments.');
+                    } finally {
+                      setIsAnalyzing(false);
+                    }
+                  }}
+                  disabled={isAnalyzing}
+                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all border border-green-400 shadow-md disabled:opacity-50"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                      Analyzing...
+                    </>
+                  ) : '📊 View Analysis'}
+                </button>
+              )}
               <button
                 onClick={() => navigate('/home')}
                 className="px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white font-medium rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all border border-gray-500 shadow-md"
@@ -440,6 +535,7 @@ export default function InterviewRoomPage({ userProfile }: InterviewRoomPageProp
                   setIsEnded(false);
                   setTime(0);
                   setTabSwitchCount(0);
+                  setAnalysis(null);
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all border border-blue-400 shadow-md"
               >

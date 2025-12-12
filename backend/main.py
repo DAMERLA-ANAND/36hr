@@ -721,6 +721,7 @@ async def register_call_endpoint(request: RegisterCallRequest):
         questions_text = "\n".join([f"- {q['question']}" for q in interview.get("questions", [])])
         
         dynamic_data = {
+            "name": request.user_name,  # For {{name}} placeholder in Retell agent
             "candidate_name": request.user_name,
             "candidate_email": request.user_email,
             "interview_name": interview.get("name", "Mock Interview"),
